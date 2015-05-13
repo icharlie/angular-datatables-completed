@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "koa": "^0.20.0",
+    "koa-middlewares": "^3.1.0",
+    "koa-static": "^1.4.9",
+    "lowdb": "^0.7.3"
+  }
+}
