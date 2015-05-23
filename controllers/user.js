@@ -18,5 +18,6 @@ exports.new = function* (next) {
 exports.delete = function* (next) {
   var userId = +this.params.id;
   users.remove({id: userId});
+	this.status = 204;
   this.body = undefined;
 };
