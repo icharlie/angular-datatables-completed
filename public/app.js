@@ -84,9 +84,9 @@
 
 
 			$http
-			.delete(deleteUrl)
-			.success(succssFn)
-			.error(errorFn);
+				.delete(deleteUrl)
+				.success(succssFn)
+				.error(errorFn);
 		}
 
 		function localPromise() {
