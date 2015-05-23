@@ -61,12 +61,14 @@
           cacheUser = user;
         }
       });
-      vm.users = _users;
-      vm.dtInstance.reloadData();
       $http.delete(deleteUrl).
+				success(function() {
+					vm.users = _users;
+					vm.dtInstance.reloadData();
+				}).
         error(function(data, status) {
-          vm.users.push(cacheUser);
-          vm.dtInstance.reloadData();
+					console.log(status);
+					console.log(data);
         });
     }
 
