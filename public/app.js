@@ -59,9 +59,9 @@
 		function deleteUser(id) {
 			var deleteUrl = ['/users/', id, '/delete'].join('');
 
-			var _users = [];
-
-			var cacheUser;
+			var _users = vm.users.filter(function(e) {
+				return e.id !== id;
+			});
 
 			var succssFn = function(data, status) {
 				vm.users = _users;
@@ -72,16 +72,6 @@
 				console.log(status);
 				console.log(data);
 			};
-
-			vm.users.forEach(function(user){
-				if (user.id !== id) {
-					_users.push(user)
-				} else {
-					cacheUser = user;
-				}
-			});
-
-
 
 			$http
 				.delete(deleteUrl)
