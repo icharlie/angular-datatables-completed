@@ -34,38 +34,54 @@
       };
     }
 
+		vm.removeById = function (id) {
+			var _users = [];
+			var cacheUser;
+			this.users.forEach(function(user){
+				if (user.id !== id) {
+					_users.push(user)
+				} else {
+					cacheUser = user;
+				}
+			});
+			this.users = _users;
+			this.cacheUser = cacheUser;
+		};
+
     function add() {
       var newUser = angular.copy(vm.user);
+      newUser.id = vm.users.length + 1; // fake one for sort
+      newUser.index = vm.id - 1;
+      vm.users.push(newUser);
+      vm.dtInstance.reloadData();
+      vm.user = getNewUser();
       $http.post('/users/new', newUser).
         success(function(data) {
-          vm.users.push(data);
+          var index = data.index;
+          delete data.index;
+          vm.users[index] = data;
           vm.dtInstance.reloadData();
-          vm.user = getNewUser();
         }).
         error(function(data,status) {
-          // handle the error
-          console.log(status);
-          console.log(data);
+					console.log(status);
+					console.log(data);
+					// update table
+					vm.removeById(newUser.id);
+					vm.dtInstance.reloadData();
         });
     }
 
 
     function deleteUser(id) {
       var deleteUrl = ['/users/', id, '/delete'].join('');
-      var _users = [];
-      var cacheUser;
-      vm.users.forEach(function(user){
-        if (user.id !== id) {
-          _users.push(user)
-        } else {
-          cacheUser = user;
-        }
-      });
-      vm.users = _users;
-      vm.dtInstance.reloadData();
-      $http.delete(deleteUrl).
+			vm.removeById(id);
+			$http.delete(deleteUrl).
+        success(function() {
+					vm.cacheUser = undefined;
+          vm.dtInstance.reloadData();
+        }).
         error(function(data, status) {
-          vm.users.push(cacheUser);
+          vm.users.push(vm.cacheUser);
           vm.dtInstance.reloadData();
         });
     }
@@ -77,8 +93,8 @@
       } else {
         var remotePromise = $resource('/users').query().$promise;
         remotePromise.then(function (users) {
-          vm.users = users;
-          dfd.resolve(vm.users);
+					vm.users = users;
+					dfd.resolve(vm.users);
         });
       }
       return dfd.promise;
